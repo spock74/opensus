@@ -1,0 +1,22 @@
+Package: opensus
+Type: Package
+Title: Analise e visualizacao de dados geoespaciais sobre o Sistema Unico de
+    Saude
+Version: 0.0.1
+Date: 2014-12-23
+Author: Jose Moraes
+Maintainer: Jose Moraes <elvano@gmail.com>
+Description: TODO
+License: BSD
+Imports: 
+    dplyr,
+    ggplot2,
+    leafletR,
+    RJSONIO,
+    jsonlite,
+    RCurl,
+    opencpu,
+    rmongodb,
+    ggmap
+Suggests: 
+    testthat
