@@ -8,7 +8,7 @@ Author: Jose Moraes
 Maintainer: Jose Moraes <elvano@gmail.com>
 Description: TODO
 License: BSD
-Imports: 
+Imports:
     dplyr,
     ggplot2,
     leafletR,
@@ -18,5 +18,5 @@ Imports:
     opencpu,
     rmongodb,
     ggmap
-Suggests: 
+Suggests:
     testthat

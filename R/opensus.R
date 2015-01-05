@@ -94,7 +94,7 @@ getLatLonByCnes <- function(cnesCod, ns  = "opensus.cnesminas"){
 #'
 #'
 #'@return res a data.frame with values for Lat and Lon
-getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 30000L){
+getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 100L){
     res <- NULL
     
     # connect to local mongodb
@@ -159,41 +159,75 @@ getMapByMunicipioList <- function(municipio, mapsource = "osm", ns  = "opensus.c
     
     rmongodb::mongo.disconnect(mongo)
     rmongodb::mongo.destroy(mongo)
-    
-    ## Incia mapa
-    
-    
-    
-    
+
     return( res )
 }
 
+#'TODOTODOTODOTODOTODOTODOTODO
+#'Retrieve a data.frame containing all Latitude and Longitude 
+#'values for a given municipio name
 #'@author Jose Moraes
-#'@title Nao usar
+#'@param municipio name of the municipio
 #'
 #'
-#'
-# navegarApp <- function(porta){
-#     opencpu::opencpu$stop()
-#     opencpu::opencpu$start(porta)
-#     opencpu::opencpu$url()
-#     opencpu::opencpu$browse("/library/opensus/www")
-# }
+#'@return res a data.frame with values for Lat and Lon
+getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 100L){
+    res <- NULL
+    
+    # connect to local mongodb
+    mongo <- rmongodb::mongo.create()
+    # create bson query object 
+    query <- rmongodb::mongo.bson.from.list( list(Municipio = toupper(municipio)) )
+    res <- rmongodb::mongo.find.batch(mongo = mongo, ns  = ns, query, limit = nLimit)
+    rmongodb::mongo.disconnect(mongo)
+    rmongodb::mongo.destroy(mongo)
+    
+    
+    res.df <- data.frame(CNES = rep(NA, length(res)), 
+                         Lat = rep(NA, length(res)), 
+                         Lon = rep(NA, length(res)))
+    
+    for(ii in 1:length(res)){
+        CNES <- rep(NA, length(res))
+        res.df$CNES[ii] <- res[[ii]]$CNES
+        res.df$Lat[ii]  <- res[[ii]]$Latitude
+        res.df$Lon[ii]  <- res[[ii]]$Longitude
+    }
+    
+    return( res.df )
+}
 
-
-
-#'@title Nao usar
+#'geoJSON representation of a given municipio \code{string} name and a 
+#'\code{integer} to limit number os records returned
+#'@param municipio municipio name in \code{string} format
+#'@param nLimit maximum number of records to br returned
+#'@param ns namespace of \code{mongodb} instance default: "opensus.cnesminas"
 #'@author Jose Moraes
 #'
-#'
-#'
-#'
-# navegarTeREST <- function(){
-#     opencpu::opencpu$stop()
-#     opencpu::opencpu$start(4242)
-#     opencpu::opencpu$url()
-#     opencpu::opencpu$browse("/library/TeREST/www")
-# }
-
-
+getGeoJSONByMunicipio <- function(municipio = "Vargem Alegre", ns  = "opensus.cnesminas", nLimit = 10L){
+    
+    res <- NULL
+    mongo <- rmongodb::mongo.create()
+    
+    # create query object 
+    query <- rmongodb::mongo.bson.from.list( list(Municipio = toupper(municipio)) )
+    
+    res <- rmongodb::mongo.find.batch(mongo = mongo, ns  = ns, query, limit = nLimit)
+    
+    rmongodb::mongo.disconnect(mongo)
+    rmongodb::mongo.destroy(mongo)
+    
+    res.df <- data.frame(CNES = rep(NA, length(res)), 
+                         Lat = rep(NA, length(res)), 
+                         Lon = rep(NA, length(res)))
+    
+    for(ii in 1:length(res)){
+        res.df$Lat[ii]  <- res[[ii]]$Latitude
+        res.df$Lon[ii]  <- res[[ii]]$Longitude
+    }
+    
+    #geoJ <- leafletR::toGeoJSON(data = res.df, lat.lon = c(res.df$Lat, res.df$Lon) )
+    
+    return( res.df )
+}
 
