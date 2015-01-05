@@ -188,7 +188,6 @@ getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 
                          Lon = rep(NA, length(res)))
     
     for(ii in 1:length(res)){
-        CNES <- rep(NA, length(res))
         res.df$CNES[ii] <- res[[ii]]$CNES
         res.df$Lat[ii]  <- res[[ii]]$Latitude
         res.df$Lon[ii]  <- res[[ii]]$Longitude
@@ -222,6 +221,7 @@ getGeoJSONByMunicipio <- function(municipio = "Vargem Alegre", ns  = "opensus.cn
                          Lon = rep(NA, length(res)))
     
     for(ii in 1:length(res)){
+        res.df$CNES[ii] <- res[[ii]]$CNES
         res.df$Lat[ii]  <- res[[ii]]$Latitude
         res.df$Lon[ii]  <- res[[ii]]$Longitude
     }
@@ -231,3 +231,41 @@ getGeoJSONByMunicipio <- function(municipio = "Vargem Alegre", ns  = "opensus.cn
     return( res.df )
 }
 
+
+
+#' Map
+#'
+#'
+#'
+#'
+getMapByMunicipio <- function(municipio = "Belo Horizonte", ns  = "opensus.cnesminas", nLimit = 10L){
+    
+    
+    res <- NULL
+    mongo <- rmongodb::mongo.create()
+    
+    # create query object 
+    query <- rmongodb::mongo.bson.from.list( list(Municipio = toupper(municipio)) )
+    
+    res <- rmongodb::mongo.find.batch(mongo = mongo, ns  = ns, query, limit = nLimit)
+    
+    rmongodb::mongo.disconnect(mongo)
+    rmongodb::mongo.destroy(mongo)
+    
+    res.df <- data.frame(CNES = rep(NA, length(res)), 
+                         Lat = rep(NA, length(res)), 
+                         Lon = rep(NA, length(res)))
+    
+    for(ii in 1:length(res)){
+        res.df$CNES[ii] <- res[[ii]]$CNES
+        res.df$Lat[ii]  <- res[[ii]]$Latitude
+        res.df$Lon[ii]  <- res[[ii]]$Longitude
+    }
+    
+    tmarkers <- data.frame(lon = res.df$Lon, lat = res.df$Lat)
+    
+    map <- ggmap::get_googlemap(center = c(lon = res.df$Lon[1], res.df$Lat[1]),
+                         zoom = 10, size = c(640, 640), scale = 2, markers = tmarkers)
+    
+    return( map )
+}
