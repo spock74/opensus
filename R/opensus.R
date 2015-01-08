@@ -38,25 +38,15 @@ getDocStructure <- function(){
 
   # Get R list object
   if(rmongodb::mongo.is.connected(mongo)){
-    res <- rmongodb::mongo.find.batch(mongo, ns = ns, query, limit = 100L)
-    #TODO chek for errors, assert metada data are as expected    
+    #Just pick a document based on a given field (UF, here)
+    res <- rmongodb::mongo.find.one(mongo = mongo, ns = "opensus.cnesminas")
+    #TODO chek for errors, asserts that query properties/metadata are ok  
     
   }else{
     print("Unable to connect.  Error code: ")
     print( mongo.get.err(mongo) )
   }
 
-  #Just pick a document based on a given field (UF, here)
-  cursor <- rmongodb::mongo.find.one(mongo = mongo, 
-                                    ns = "opensus.cnesminas", 
-                                    query = mongo.bson.from.list(UF = "MG"),
-                                    fields = mongo.bson.empty())
-  #TODO chek for errors, asserts that query properties/metadata are ok
-  
-  res <- rmongodb::mongo.cursor.to.data.frame(cursor = cursor)
-  
-  
-  
   # Free resources
   if( !rmongodb::mongo.is.connected(mongo) ){
     rmongodb::mongo.get.last.err(mongo = mongo, db = "opensus")
