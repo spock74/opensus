@@ -1,68 +1,68 @@
-#'Retrieve the \code{mongodb document} given a CNES code number
-#'@param cnesCod Codigo CNES a ser pesquisado
-#'@param ns \code{mongodb} namespace 
-#'@author Jose Moraes
+#' Retrieve the \code{mongodb document} given a CNES code number
+#' @param cnesCod Codigo CNES a ser pesquisado
+#' @param ns \code{mongodb} namespace 
+#' @author Jose Moraes
 getDocByCnes <- function(cnesCod, ns = "opensus.cnesminas"){
-  res <- NULL
-  # Gets a mongodb connection instance
-  mongo <- rmongodb::mongo.create()
-  #TODO chek for errors, assert connection properties are ok
-  
-  query <- rmongodb::mongo.bson.from.list( list(CNES = cnesCod) )
-  #TODO chek for errors, assert query properties/metadata are ok
-  
-  # Get an R list object containing result.
-  res <- rmongodb::mongo.find.batch(mongo, ns = ns, query, limit = 100L)
-  #TODO chek for errors, assert metada data are as expected, like having 
-  # exactly one element in the list (TODO remember check with G M Cunha if
-  # CNES code are UNIQUE identifiers)
-  
-  # Free resources
-  rmongodb::mongo.disconnect(mongo)
-  rmongodb::mongo.destroy(mongo)
-  #TODO check for errors and or warnings, treat them accordingly 
-  
-  return(res)
+    res <- NULL
+    # Gets a mongodb connection instance
+    mongo <- rmongodb::mongo.create()
+    #TODO chek for errors, assert connection properties are ok
+    
+    query <- rmongodb::mongo.bson.from.list( list(CNES = cnesCod) )
+    #TODO chek for errors, assert query properties/metadata are ok
+    
+    # Get an R list object containing result.
+    res <- rmongodb::mongo.find.batch(mongo, ns = ns, query, limit = 100L)
+    #TODO chek for errors, assert metada data are as expected, like having 
+    # exactly one element in the list (TODO remember check with G M Cunha if
+    # CNES code are UNIQUE identifiers)
+    
+    # Free resources
+    rmongodb::mongo.disconnect(mongo)
+    rmongodb::mongo.destroy(mongo)
+    #TODO check for errors and or warnings, treat them accordingly 
+    
+    return(res)
 }
 
 
-#'Convenience method to print the fields contained in \code{mongodb document} 
-#'as a dataframe. Namespace is hard coded as \code{ns = "opensus.cnesminas"}
-#'@return \code{mongodb document}
-#'@author Jose Moraes
+#' Convenience method to print the fields contained in \code{mongodb document} 
+#' as a dataframe. Namespace is hard coded as \code{ns = "opensus.cnesminas"}
+#' @return \code{mongodb document}
+#' @author Jose Moraes
 getDocStructure <- function(){
-  res <- NULL
-  # Gets a mongodb connection instance
-  mongo <- rmongodb::mongo.create()
-  #TODO chek for errors, assert connection properties are ok
-
-  # Get R list object
-  if(rmongodb::mongo.is.connected(mongo)){
-    #Just pick a document based on a given field (UF, here)
-    res <- rmongodb::mongo.find.one(mongo = mongo, ns = "opensus.cnesminas")
-    #TODO chek for errors, asserts that query properties/metadata are ok  
+    res <- NULL
+    # Gets a mongodb connection instance
+    mongo <- rmongodb::mongo.create()
+    #TODO chek for errors, assert connection properties are ok
     
-  }else{
-    print("Unable to connect.  Error code: ")
-    print( mongo.get.err(mongo) )
-  }
-
-  # Free resources
-  if( !rmongodb::mongo.is.connected(mongo) ){
-    rmongodb::mongo.get.last.err(mongo = mongo, db = "opensus")
-  }
-  rmongodb::mongo.disconnect(mongo)
-  rmongodb::mongo.destroy(mongo)
-  #TODO check for errors and or warnings, treat them accordingly 
-  
-  return(res)
+    # Get R list object
+    if(rmongodb::mongo.is.connected(mongo)){
+        #Just pick a document based on a given field (UF, here)
+        res <- rmongodb::mongo.find.one(mongo = mongo, ns = "opensus.cnesminas")
+        #TODO chek for errors, asserts that query properties/metadata are ok  
+        
+    }else{
+        print("Unable to connect.  Error code: ")
+        print( mongo.get.err(mongo) )
+    }
+    
+    # Free resources
+    if( !rmongodb::mongo.is.connected(mongo) ){
+        rmongodb::mongo.get.last.err(mongo = mongo, db = "opensus")
+    }
+    rmongodb::mongo.disconnect(mongo)
+    rmongodb::mongo.destroy(mongo)
+    #TODO check for errors and or warnings, treat them accordingly 
+    
+    return(res)
 }
 
 #' Obtem o numero de registros (documentos na instancia do mongodb)
 #' @param municipio nome do municipio
 #' @param ns namespace a ser usado, na forma 'database.collection'
 #' @author Jose Moraes
-#'
+#' 
 getNumDocByMunicipio <- function(municipio, ns = "opensus.cnesminas"){
     
     res <- NULL
@@ -93,24 +93,24 @@ getDocByMunicipio <- function(municipio, ns = "opensus.cnesminas", nLimite = 10L
     return(res)
 }
 
-#'TODO
-#'
-#'
-#'
-#'
-#'
-#'
+#' TODO
+#' 
+#' 
+#' 
+#' 
+#' 
+#' 
 getGeoJsonByMunicipio <- function(){
     print("YTBD")
     return("YTBD")
 }
 
 #' Retrive a dataframe containing Latitud and Longitude for a given CNES cod
-#'@author Jose Moraes
-#'@param cnesCod CNES number of a institution
-#'
-#'
-#'@return res a data frame with values for Lat and Lon
+#' @author Jose Moraes
+#' @param cnesCod CNES number of a institution
+#' 
+#' 
+#' @return res a data frame with values for Lat and Lon
 getLatLonByCnes <- function(cnesCod, ns  = "opensus.cnesminas"){
     
     res <- NULL
@@ -129,13 +129,13 @@ getLatLonByCnes <- function(cnesCod, ns  = "opensus.cnesminas"){
 }
 
 
-#'Retrieve a data.frame containing all Latitude and Longitude 
-#'values for a given municipio name
-#'@author Jose Moraes
-#'@param municipio name of the municipio
-#'
-#'
-#'@return res a data.frame with values for Lat and Lon
+#' Retrieve a data.frame containing all Latitude and Longitude 
+#' values for a given municipio name
+#' @author Jose Moraes
+#' @param municipio name of the municipio
+#' 
+#' 
+#' @return res a data.frame with values for Lat and Lon
 getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 100L){
     res <- NULL
     
@@ -161,12 +161,12 @@ getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 
     return( res.df )
 }
 
-#'Get Fields values based a R named list in te form fieldsList = ("Key" = "value" )
-#'@param fieldsList a R named list containing ("key" = "VALUE") pairs 
-#'@param nLimit 
-#'@param ns
-#'@author Jose Moraes
-#'
+#' Get Fields values based a R named list in te form fieldsList = ("Key" = "value" )
+#' @param fieldsList a R named list containing ("key" = "VALUE") pairs 
+#' @param nLimit 
+#' @param ns
+#' @author Jose Moraes
+#' 
 getDocByFieldsList <- function(fieldsList, ns  = "opensus.cnesminas", nLimit = 10L){
     
     res <- NULL
@@ -183,12 +183,12 @@ getDocByFieldsList <- function(fieldsList, ns  = "opensus.cnesminas", nLimit = 1
     return( res )
 }
 
-#'Get Fields values based a R named list in te form fieldsList = ("Key" = "value" )
-#'@param fieldsList a R named list containing ("key" = "VALUE") pairs 
-#'@param nLimit 
-#'@param ns
-#'@author Jose Moraes
-#'
+#' Get Fields values based a R named list in te form fieldsList = ("Key" = "value" )
+#' @param fieldsList a R named list containing ("key" = "VALUE") pairs 
+#' @param nLimit 
+#' @param ns
+#' @author Jose Moraes
+#' 
 getMapByMunicipioList <- function(municipio, mapsource = "osm", ns  = "opensus.cnesminas", nLimit = 10L){
     
     res <- NULL
@@ -201,18 +201,18 @@ getMapByMunicipioList <- function(municipio, mapsource = "osm", ns  = "opensus.c
     
     rmongodb::mongo.disconnect(mongo)
     rmongodb::mongo.destroy(mongo)
-
+    
     return( res )
 }
 
-#'TODOTODOTODOTODOTODOTODOTODO
-#'Retrieve a data.frame containing all Latitude and Longitude 
-#'values for a given municipio name
-#'@author Jose Moraes
-#'@param municipio name of the municipio
-#'
-#'
-#'@return res a data.frame with values for Lat and Lon
+#' TODOTODOTODOTODOTODOTODOTODO
+#' Retrieve a data.frame containing all Latitude and Longitude 
+#' values for a given municipio name
+#' @author Jose Moraes
+#' @param municipio name of the municipio
+#' 
+#' 
+#' @return res a data.frame with values for Lat and Lon
 getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 100L){
     res <- NULL
     
@@ -238,13 +238,13 @@ getLatLonByMunicipio <- function(municipio, ns  = "opensus.cnesminas", nLimit = 
     return( res.df )
 }
 
-#'geoJSON representation of a given municipio \code{string} name and a 
-#'\code{integer} to limit number os records returned
-#'@param municipio municipio name in \code{string} format
-#'@param nLimit maximum number of records to br returned
-#'@param ns namespace of \code{mongodb} instance default: "opensus.cnesminas"
-#'@author Jose Moraes
-#'
+#' geoJSON representation of a given municipio \code{string} name and a 
+#' \code{integer} to limit number os records returned
+#' @param municipio municipio name in \code{string} format
+#' @param nLimit maximum number of records to br returned
+#' @param ns namespace of \code{mongodb} instance default: "opensus.cnesminas"
+#' @author Jose Moraes
+#' 
 getGeoJSONByMunicipio <- function(municipio = "Vargem Alegre", ns  = "opensus.cnesminas", nLimit = 10L){
     
     res <- NULL
@@ -276,11 +276,11 @@ getGeoJSONByMunicipio <- function(municipio = "Vargem Alegre", ns  = "opensus.cn
 
 
 #' Map
-#'
-#'
-#'
-#'
-getMapByMunicipio <- function(municipio = "Belo Horizonte", ns  = "opensus.cnesminas", nLimit = 10L){
+#' 
+#' 
+#' 
+#' 
+getMapByMunName <- function(municipio = "Belo Horizonte", ns  = "opensus.cnesminas", nLimit = 10L){
     
     
     res <- NULL
@@ -307,7 +307,62 @@ getMapByMunicipio <- function(municipio = "Belo Horizonte", ns  = "opensus.cnesm
     tmarkers <- data.frame(lon = res.df$Lon, lat = res.df$Lat)
     
     map <- ggmap::get_googlemap(center = c(lon = res.df$Lon[1], res.df$Lat[1]),
-                         zoom = 10, size = c(640, 640), scale = 2, markers = tmarkers)
+                                zoom = 10, size = c(640, 640), scale = 2, markers = tmarkers)
     
     return( map )
+}
+
+
+#' Get a \code{R} \code{list} containing all documents in the \code{mongodb} 
+#' for a municipio given its IBGE number code ID
+#' @param munIBGECod
+#' 
+#' 
+#' 
+getDocByMunIBGECod <- function(munIBGECod) {
+    #TODO
+    # Insert fild IBGECOD on opensus.cnesminas mongo collection
+}
+
+
+#' Get a \code{ggmap} \code{map} for a municipio given its IBGE number code ID
+#' @param munIBGECod
+#' 
+#' 
+#' 
+getMapByMunIBGECod <- function(munIBGECod){
+    #TODO
+    # Insert fild IBGECOD on opensus.cnesminas mongo collection
+}
+
+
+#' Get a map based on a pair of \code{\[lat, lon\]} boundingbox coord passed
+#' @param ULClat
+#' @param ULClon
+#' @param BRClat
+#' @param BRClon
+#' @return a map
+#' @author Jose Moraes
+getMapByLatLon <- function(ULClat, ULClon, BRClat, BRClon){
+    ##  #TODO
+    ##  # get a map based on a boundingbox coord passed
+    ##  ///
+    ##
+    ##    ULC -->>  +-------------+
+    ##              |             |
+    ##              |             |
+    ##              |      c      |
+    ##              |             |
+    ##              |             |
+    ##              +-------------+ <<-- BRC
+    ##              
+    ##  /// 
+    ##  ULC: coord1: [lat, lon] <<-- upperleftcorner
+    ##  BRC: coord2: [lat, lon] <<-- bottomrightcorner
+    
+    
+    
+    
+    
+    
 }
