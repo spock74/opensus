@@ -1,22 +1,74 @@
-#'Obtem todo o documento mongodb relativo a um dado numero CNES
+#'Retrieve the \code{mongodb document} given a CNES code number
 #'@param cnesCod Codigo CNES a ser pesquisado
+#'@param ns \code{mongodb} namespace 
 #'@author Jose Moraes
 getDocByCnes <- function(cnesCod, ns = "opensus.cnesminas"){
-    # Variavel de saida
-    res <- NULL
-    # Conecta com mongodb
-    mongo <- rmongodb::mongo.create()
-    query <- rmongodb::mongo.bson.from.list( list(CNES = cnesCod) )
-    # res é da classe R list
-    res <- rmongodb::mongo.find.batch(mongo, ns = ns, query, limit=100L)
-    # Fechar recursos
-    rmongodb::mongo.disconnect(mongo)
-    rmongodb::mongo.destroy(mongo)
-    
-    return(res)
+  res <- NULL
+  # Gets a mongodb connection instance
+  mongo <- rmongodb::mongo.create()
+  #TODO chek for errors, assert connection properties are ok
+  
+  query <- rmongodb::mongo.bson.from.list( list(CNES = cnesCod) )
+  #TODO chek for errors, assert query properties/metadata are ok
+  
+  # Get an R list object containing result.
+  res <- rmongodb::mongo.find.batch(mongo, ns = ns, query, limit = 100L)
+  #TODO chek for errors, assert metada data are as expected, like having 
+  # exactly one element in the list (TODO remember check with G M Cunha if
+  # CNES code are UNIQUE identifiers)
+  
+  # Free resources
+  rmongodb::mongo.disconnect(mongo)
+  rmongodb::mongo.destroy(mongo)
+  #TODO check for errors and or warnings, treat them accordingly 
+  
+  return(res)
 }
 
-#' Obtem o numero de resistros (documentos na instancia do mongodb)
+
+#'Convenience method to print the fields contained in \code{mongodb document} 
+#'as a dataframe. Namespace is hard coded as \code{ns = "opensus.cnesminas"}
+#'@return \code{mongodb document}
+#'@author Jose Moraes
+getDocStructure <- function(){
+  res <- NULL
+  # Gets a mongodb connection instance
+  mongo <- rmongodb::mongo.create()
+  #TODO chek for errors, assert connection properties are ok
+
+  # Get R list object
+  if(rmongodb::mongo.is.connected(mongo)){
+    res <- rmongodb::mongo.find.batch(mongo, ns = ns, query, limit = 100L)
+    #TODO chek for errors, assert metada data are as expected    
+    
+  }else{
+    print("Unable to connect.  Error code: ")
+    print( mongo.get.err(mongo) )
+  }
+
+  #Just pick a document based on a given field (UF, here)
+  cursor <- rmongodb::mongo.find.one(mongo = mongo, 
+                                    ns = "opensus.cnesminas", 
+                                    query = mongo.bson.from.list(UF = "MG"),
+                                    fields = mongo.bson.empty())
+  #TODO chek for errors, asserts that query properties/metadata are ok
+  
+  res <- rmongodb::mongo.cursor.to.data.frame(cursor = cursor)
+  
+  
+  
+  # Free resources
+  if( !rmongodb::mongo.is.connected(mongo) ){
+    rmongodb::mongo.get.last.err(mongo = mongo, db = "opensus")
+  }
+  rmongodb::mongo.disconnect(mongo)
+  rmongodb::mongo.destroy(mongo)
+  #TODO check for errors and or warnings, treat them accordingly 
+  
+  return(res)
+}
+
+#' Obtem o numero de registros (documentos na instancia do mongodb)
 #' @param municipio nome do municipio
 #' @param ns namespace a ser usado, na forma 'database.collection'
 #' @author Jose Moraes
