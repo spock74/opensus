@@ -1,2 +1,2 @@
-context("getDocByCnes") 
+context("getNumDocByMunicipio") 
 test_that("Testing ...", {expect_equal(1, 1)})
